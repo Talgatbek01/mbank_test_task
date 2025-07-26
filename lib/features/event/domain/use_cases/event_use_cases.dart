@@ -10,6 +10,9 @@ class EventUseCases {
     required DateTime startDate,
     DateTime? endDate,
   }) async {
-    return await eventRepository.fetchEvents();
+    return await eventRepository.fetchEvents(
+      startDate: startDate,
+      endDate: endDate,
+    );
   }
 }
