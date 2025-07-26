@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../domain/entities/event_entity.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../bloc/event_cubit.dart';
 import '../widgets/event_item.dart';
 
 class EventScreen extends StatefulWidget {
@@ -12,24 +14,45 @@ class EventScreen extends StatefulWidget {
 
 class _EventScreenState extends State<EventScreen> {
   @override
+  void initState() {
+    super.initState();
+    context.read<EventCubit>().getEventList(
+      startDate: DateTime.now(),
+      endDate: DateTime.now(),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Events Screen')),
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              itemCount: 20,
-              itemBuilder: (context, index) {
-                final event = index + 1;
+            child: BlocBuilder<EventCubit, EventState>(
+              builder: (context, state) {
+                switch (state.status) {
+                  case EventStatus.initial:
+                    return Center(child: CircularProgressIndicator.adaptive());
 
-                return EventItem(
-                  event: EventEntity(
-                    name: 'Event $event',
-                    description: 'Description' * event,
-                    date: DateTime.now(),
-                  ),
-                );
+                  case EventStatus.success:
+                    return ListView.builder(
+                      itemCount: state.events.length,
+                      itemBuilder: (context, index) {
+                        final event = state.events[index];
+
+                        return EventItem(event: event);
+                      },
+                    );
+
+                  case EventStatus.error:
+                    return Center(
+                      child: Text(
+                        state.error ?? 'Что то пошло не так',
+                        textAlign: TextAlign.center,
+                      ),
+                    );
+                }
               },
             ),
           ),

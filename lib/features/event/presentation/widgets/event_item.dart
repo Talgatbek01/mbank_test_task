@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:intl/intl.dart';
+
 import '../../domain/entities/event_entity.dart';
 
 class EventItem extends StatelessWidget {
@@ -12,7 +14,7 @@ class EventItem extends StatelessWidget {
     return ListTile(
       title: Text(event.name),
       subtitle: Text(event.description),
-      trailing: Text('Date'),
+      trailing: Text(DateFormat('dd-MM-yyyy').format(event.date)),
     );
   }
 }

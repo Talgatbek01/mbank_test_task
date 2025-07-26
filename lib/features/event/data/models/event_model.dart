@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 import '../../domain/entities/event_entity.dart';
 
 class EventModel extends EventEntity {
@@ -8,10 +10,12 @@ class EventModel extends EventEntity {
   });
 
   factory EventModel.fromJson(Map<String, dynamic> json) {
+    final formatter = DateFormat('dd-MM-yyyy');
+
     return EventModel(
       name: json['event_name'],
       description: json['description'],
-      date: DateTime.parse(json['date']),
+      date: formatter.parse(json['date']),
     );
   }
 }

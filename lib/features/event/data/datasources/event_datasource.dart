@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 
 import '../../domain/entities/event_entity.dart';
 import '../models/event_model.dart';
@@ -13,9 +14,19 @@ class EventDatasource {
     DateTime? endDate,
   }) async {
     const url = 'api/test-task';
-    final response = await dio.get(url);
-    final data = response.data as List;
+    final formatter = DateFormat('dd-MM-yyyy');
+    final params = {
+      'start_date': formatter.format(startDate),
+      if (endDate != null) 'end_date': formatter.format(endDate),
+    };
 
-    return data.map((json) => EventModel.fromJson(json)).toList();
+    try {
+      final response = await dio.get(url, queryParameters: params);
+      final data = response.data as List;
+
+      return data.map((json) => EventModel.fromJson(json)).toList();
+    } catch (e) {
+      throw '$e';
+    }
   }
 }
