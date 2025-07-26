@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 
@@ -22,6 +24,8 @@ class EventDatasource {
       if (endDate != null) 'end_date': formatter.format(endDate),
     };
 
+    print('$params');
+
     try {
       final response = await dio.get(url, queryParameters: params);
       final data = response.data;
@@ -33,6 +37,12 @@ class EventDatasource {
         return data.map((json) => EventModel.fromJson(json)).toList();
       } else {
         throw Failure('Неправильный формат данных');
+      }
+    } on DioException catch (dioError) {
+      if (dioError.error is SocketException) {
+        throw Failure('Нет подключение к интернету');
+      } else {
+        throw Failure('${dioError.message}');
       }
     } catch (e) {
       throw Failure('$e');

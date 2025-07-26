@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/event_cubit.dart';
+import '../widgets/date_range_selector.dart';
 import '../widgets/event_error_widget.dart';
 import '../widgets/event_item.dart';
+import '../widgets/events_empty_widget.dart';
 
 class EventScreen extends StatefulWidget {
   const EventScreen({super.key});
@@ -15,17 +17,12 @@ class EventScreen extends StatefulWidget {
 
 class _EventScreenState extends State<EventScreen> {
   late DateTime _startDate;
-  DateTime? _endDate;
 
   @override
   void initState() {
     super.initState();
     _startDate = DateTime.now();
-
-    context.read<EventCubit>().getEventList(
-      startDate: _startDate,
-      endDate: _endDate,
-    );
+    context.read<EventCubit>().getEventList(startDate: _startDate);
   }
 
   @override
@@ -34,6 +31,16 @@ class _EventScreenState extends State<EventScreen> {
       appBar: AppBar(title: Text('Events Screen')),
       body: Column(
         children: [
+          const SizedBox(height: 20),
+          DateRangeSelector(
+            onDateSelected: (start, end) {
+              context.read<EventCubit>().getEventList(
+                startDate: start,
+                endDate: end,
+              );
+            },
+          ),
+          const SizedBox(height: 10),
           Expanded(
             child: BlocBuilder<EventCubit, EventState>(
               builder: (context, state) {
@@ -42,6 +49,10 @@ class _EventScreenState extends State<EventScreen> {
                     return Center(child: CircularProgressIndicator.adaptive());
 
                   case EventStatus.success:
+                    if (state.events.isEmpty) {
+                      return Center(child: EventsEmptyWidget());
+                    }
+
                     return ListView.builder(
                       itemCount: state.events.length,
                       itemBuilder: (context, index) {
