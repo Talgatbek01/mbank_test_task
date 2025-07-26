@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:mbank_test_task/core/error/failure.dart';
 
 import '../../domain/entities/event_entity.dart';
 import '../../domain/use_cases/event_use_cases.dart';
@@ -22,6 +23,8 @@ class EventCubit extends Cubit<EventState> {
         endDate: endDate,
       );
       emit(state.copyWith(status: EventStatus.success, events: events));
+    } on Failure catch (f) {
+      emit(state.copyWith(status: EventStatus.error, error: f.error));
     } catch (_) {
       emit(state.copyWith(status: EventStatus.error));
     }

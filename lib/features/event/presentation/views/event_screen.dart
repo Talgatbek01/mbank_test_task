@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/event_cubit.dart';
+import '../widgets/event_error_widget.dart';
 import '../widgets/event_item.dart';
 
 class EventScreen extends StatefulWidget {
@@ -18,7 +19,7 @@ class _EventScreenState extends State<EventScreen> {
     super.initState();
     context.read<EventCubit>().getEventList(
       startDate: DateTime.now(),
-      endDate: DateTime.now(),
+      endDate: DateTime.now().subtract(Duration(days: 1)),
     );
   }
 
@@ -47,9 +48,8 @@ class _EventScreenState extends State<EventScreen> {
 
                   case EventStatus.error:
                     return Center(
-                      child: Text(
-                        state.error ?? 'Что то пошло не так',
-                        textAlign: TextAlign.center,
+                      child: EventErrorWidget(
+                        error: state.error ?? 'Что то пошло не так',
                       ),
                     );
                 }

@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/error/error_parser.dart';
+import '../../../../core/error/failure.dart';
 import '../../domain/entities/event_entity.dart';
 import '../models/event_model.dart';
 
@@ -22,11 +24,18 @@ class EventDatasource {
 
     try {
       final response = await dio.get(url, queryParameters: params);
-      final data = response.data as List;
+      final data = response.data;
 
-      return data.map((json) => EventModel.fromJson(json)).toList();
+      final failure = errorParser(data);
+      if (failure != null) throw failure;
+
+      if (data is List) {
+        return data.map((json) => EventModel.fromJson(json)).toList();
+      } else {
+        throw Failure('Неправильный формат данных');
+      }
     } catch (e) {
-      throw '$e';
+      throw Failure('$e');
     }
   }
 }
