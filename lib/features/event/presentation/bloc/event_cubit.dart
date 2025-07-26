@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:mbank_test_task/core/error/failure.dart';
 
+import '../../../../core/error/failure.dart';
 import '../../domain/entities/event_entity.dart';
 import '../../domain/use_cases/event_use_cases.dart';
 

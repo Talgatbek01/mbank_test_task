@@ -14,12 +14,17 @@ class EventScreen extends StatefulWidget {
 }
 
 class _EventScreenState extends State<EventScreen> {
+  late DateTime _startDate;
+  DateTime? _endDate;
+
   @override
   void initState() {
     super.initState();
+    _startDate = DateTime.now();
+
     context.read<EventCubit>().getEventList(
-      startDate: DateTime.now(),
-      endDate: DateTime.now().subtract(Duration(days: 1)),
+      startDate: _startDate,
+      endDate: _endDate,
     );
   }
 
