@@ -24,8 +24,6 @@ class EventDatasource {
       if (endDate != null) 'end_date': formatter.format(endDate),
     };
 
-    print('$params');
-
     try {
       final response = await dio.get(url, queryParameters: params);
       final data = response.data;
