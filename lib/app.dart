@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'core/service_locator/get_it.dart';
+import 'features/event/presentation/bloc/event_cubit.dart';
+import 'features/event/presentation/views/event_screen.dart';
+
 class App extends StatefulWidget {
   const App({super.key});
 
@@ -10,8 +16,9 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(body: Center(child: Text('Hello World!'))),
+    return BlocProvider(
+      create: (_) => getIt<EventCubit>(),
+      child: MaterialApp(home: const EventScreen()),
     );
   }
 }
