@@ -34,7 +34,7 @@ class _DateRangeSelectorState extends State<DateRangeSelector> {
 
   /* Специально пропустил проверки (_startDate > _endDate просто визуальная проверка)
     а так используется (after, before)
-    чтобы соответствовать требованием задачи. Тут если (after, before) (_startDate < _endDate)
+    чтобы соответствовать требованием задачи. Тут если (after, before) (_startDate > _endDate)
     то со стороны сервера дает ошибку и мы парсим этот ошибку и показываем юзеру */
 
   void _selectEndDate() async {
