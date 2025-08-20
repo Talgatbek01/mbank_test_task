@@ -17,7 +17,7 @@ abstract class EventApiClient {
   );
 
   @POST('api/task/create')
-  Future<EventModel> createEvent(@Body() Map<String, dynamic> body);
+  Future<EventModel> createEvent(@Body() EventModel newEvent);
 
   @PUT('api/task/update/{id}')
   Future<EventModel> updateEvent(

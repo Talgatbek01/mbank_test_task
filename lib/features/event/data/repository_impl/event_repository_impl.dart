@@ -21,8 +21,8 @@ class EventRepositoryImpl implements EventRepository {
     try {
       final remoteEvents = await remoteDataSource.getEvents(params);
       return Right(remoteEvents);
-    } on ServerException {
-      return Left(ServerFailure('Server failed'));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message ?? 'Server error'));
     }
   }
 }

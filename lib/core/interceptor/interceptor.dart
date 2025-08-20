@@ -7,6 +7,8 @@ import 'package:flutter/foundation.dart';
 class DioInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    options.headers['Accept-Language'] = 'ru';
+
     if (kDebugMode) {
       final method = options.method;
       final path = options.uri.toString();

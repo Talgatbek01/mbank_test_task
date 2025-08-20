@@ -1,6 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/error/api_error.dart';
+import '../../../../core/error/exception.dart';
 import '../../domain/use_cases/event_use_cases.dart';
 import '../models/event_model.dart';
 
@@ -22,16 +25,23 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
   @override
   Future<List<EventModel>> getEvents(EventParams params) async {
     final formatter = DateFormat('dd-MM-yyyy');
-
-    return await client.getEvents(
-      formatter.format(params.startDate),
-      params.endDate != null ? formatter.format(params.endDate!) : null,
-    );
+    try {
+      return await client.getEvents(
+        formatter.format(params.startDate),
+        params.endDate != null ? formatter.format(params.endDate!) : null,
+      );
+    } on DioException catch (e) {
+      if (e.response?.data != null) {
+        final apiError = ApiError.fromJson(e.response!.data);
+        throw ServerException(apiError.allMessages);
+      }
+      throw ServerException(e.message);
+    }
   }
 
   @override
   Future<EventModel> createEvent(EventModel event) async {
-    return await client.createEvent(event.toJson());
+    return await client.createEvent(event);
   }
 
   @override
