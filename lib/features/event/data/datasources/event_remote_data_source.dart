@@ -41,6 +41,6 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
 
   @override
   Future<void> delete(int id) async {
-    return client.deleteEvent(id);
+    return await client.deleteEvent(id);
   }
 }
