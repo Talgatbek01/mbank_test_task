@@ -14,6 +14,8 @@ import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:mbank_test_task/core/network_module/network_module.dart'
     as _i28;
+import 'package:mbank_test_task/features/event/data/datasources/event_api_client.dart'
+    as _i132;
 import 'package:mbank_test_task/features/event/data/datasources/event_remote_data_source.dart'
     as _i850;
 import 'package:mbank_test_task/features/event/data/repository_impl/event_repository_impl.dart'
@@ -34,8 +36,11 @@ extension GetItInjectableX on _i174.GetIt {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final networkModule = _$NetworkModule();
     gh.lazySingleton<_i361.Dio>(() => networkModule.dio());
+    gh.lazySingleton<_i132.EventApiClient>(
+      () => networkModule.apiClient(gh<_i361.Dio>()),
+    );
     gh.lazySingleton<_i850.EventRemoteDataSource>(
-      () => _i850.EventRemoteDataSourceImpl(gh<_i361.Dio>()),
+      () => _i850.EventRemoteDataSourceImpl(gh<_i132.EventApiClient>()),
     );
     gh.lazySingleton<_i520.EventRepository>(
       () => _i777.EventRepositoryImpl(

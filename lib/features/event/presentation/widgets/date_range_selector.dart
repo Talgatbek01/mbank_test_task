@@ -24,7 +24,6 @@ class _DateRangeSelectorState extends State<DateRangeSelector> {
   Widget build(BuildContext context) {
     log('date selector build');
     final now = DateTime.now();
-
     final formatter = DateFormat('dd-MM-yyyy');
 
     return Column(
