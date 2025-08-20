@@ -9,11 +9,18 @@ import '../interceptor/interceptor.dart';
 abstract class NetworkModule {
   @lazySingleton
   Dio dio() {
+    const Map<String, dynamic> headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
+
     final dio = Dio(
       BaseOptions(
         baseUrl: Constants.baseUrl,
         connectTimeout: const Duration(seconds: 15),
         receiveTimeout: const Duration(seconds: 15),
+        sendTimeout: const Duration(seconds: 15),
+        headers: headers,
       ),
     );
     dio.interceptors.add(DioInterceptor());
@@ -21,5 +28,5 @@ abstract class NetworkModule {
   }
 
   @lazySingleton
-  EventApiClient apiClient(Dio dio) => EventApiClient(dio);
+  EventApiClient eventApiClient(Dio dio) => EventApiClient(dio);
 }

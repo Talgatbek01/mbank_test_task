@@ -39,7 +39,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i1000.Constants>(() => _i1000.Constants());
     gh.lazySingleton<_i361.Dio>(() => networkModule.dio());
     gh.lazySingleton<_i132.EventApiClient>(
-      () => networkModule.apiClient(gh<_i361.Dio>()),
+      () => networkModule.eventApiClient(gh<_i361.Dio>()),
     );
     gh.lazySingleton<_i850.EventRemoteDataSource>(
       () => _i850.EventRemoteDataSourceImpl(gh<_i132.EventApiClient>()),

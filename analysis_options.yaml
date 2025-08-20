@@ -3,5 +3,5 @@ analyzer:
   errors:
     avoid_print: ignore
 
-formatter: 
-  page_width: 100
+# formatter: 
+#   page_width: 80
