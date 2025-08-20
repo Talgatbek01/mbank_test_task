@@ -53,14 +53,14 @@ class _EventScreenState extends State<EventScreen> {
           ),
           Expanded(
             child: BlocConsumer<EventCubit, EventState>(
-              listenWhen: (previous, current) => previous.status != current.status,
+              listenWhen: (previous, current) =>
+                  previous.status != current.status,
               listener: (context, state) {
                 if (state.status == EventStatus.error) {
                   showDialog(
                     context: context,
                     barrierDismissible: false,
                     builder: (context) => AlertDialog(
-                      title: const Text('Ошибка'),
                       content: Text(state.error ?? 'Что-то пошло не так'),
                       actions: [
                         TextButton(
@@ -111,6 +111,8 @@ class _EventScreenState extends State<EventScreen> {
   }
 
   void _getEvents(DateTime start, DateTime? end) {
-    context.read<EventCubit>().getEventList(EventParams(startDate: start, endDate: end));
+    context.read<EventCubit>().getEventList(
+      EventParams(startDate: start, endDate: end),
+    );
   }
 }
