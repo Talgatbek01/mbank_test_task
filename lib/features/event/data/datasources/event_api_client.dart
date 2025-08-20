@@ -20,10 +20,7 @@ abstract class EventApiClient {
   Future<EventModel> createEvent(@Body() EventModel newEvent);
 
   @PUT('api/task/update/{id}')
-  Future<EventModel> updateEvent(
-    @Path('id') int id,
-    @Body() Map<String, dynamic> body,
-  );
+  Future<EventModel> updateEvent(@Path('id') int id, @Body() EventModel event);
 
   @DELETE('api/task/delete/{id}')
   Future<void> deleteEvent(@Path('id') int id);

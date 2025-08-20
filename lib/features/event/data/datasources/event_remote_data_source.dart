@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'package:intl/intl.dart';
 
 import '../../../../core/error/api_error.dart';
 import '../../../../core/error/exception.dart';
+import '../../../../core/utils/utils.dart';
 import '../../domain/use_cases/event_use_cases.dart';
 import '../models/event_model.dart';
 
@@ -24,11 +24,10 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
 
   @override
   Future<List<EventModel>> getEvents(EventParams params) async {
-    final formatter = DateFormat('dd-MM-yyyy');
     return _safeCall(
       () => client.getEvents(
-        formatter.format(params.startDate),
-        params.endDate != null ? formatter.format(params.endDate!) : null,
+        kDateFormatter.format(params.startDate),
+        params.endDate != null ? kDateFormatter.format(params.endDate!) : null,
       ),
     );
   }
@@ -40,7 +39,7 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
 
   @override
   Future<EventModel> updateEvent(int id, EventModel event) async {
-    return _safeCall(() => client.updateEvent(id, event.toJson()));
+    return _safeCall(() => client.updateEvent(id, event));
   }
 
   @override

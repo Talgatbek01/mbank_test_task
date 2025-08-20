@@ -81,12 +81,12 @@ class _EventApiClient implements EventApiClient {
   }
 
   @override
-  Future<EventModel> updateEvent(int id, Map<String, dynamic> body) async {
+  Future<EventModel> updateEvent(int id, EventModel event) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(body);
+    _data.addAll(event.toJson());
     final _options = _setStreamType<EventModel>(
       Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(
