@@ -12,6 +12,7 @@
 import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
+import 'package:mbank_test_task/core/constants/constants.dart' as _i1000;
 import 'package:mbank_test_task/core/network_module/network_module.dart'
     as _i28;
 import 'package:mbank_test_task/features/event/data/datasources/event_api_client.dart'
@@ -35,6 +36,7 @@ extension GetItInjectableX on _i174.GetIt {
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final networkModule = _$NetworkModule();
+    gh.singleton<_i1000.Constants>(() => _i1000.Constants());
     gh.lazySingleton<_i361.Dio>(() => networkModule.dio());
     gh.lazySingleton<_i132.EventApiClient>(
       () => networkModule.apiClient(gh<_i361.Dio>()),

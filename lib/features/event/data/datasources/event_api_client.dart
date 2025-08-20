@@ -24,7 +24,4 @@ abstract class EventApiClient {
 
   @DELETE('api/task/delete/{id}')
   Future<void> deleteEvent(@Path('id') int id);
-
-  @GET('api/task/{id}')
-  Future<EventModel> getEventById(@Path('id') int id);
 }
