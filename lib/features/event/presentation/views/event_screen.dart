@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mbank_test_task/features/event/domain/use_cases/event_use_cases.dart';
 
 import '../bloc/event_cubit.dart';
 import '../widgets/date_range_selector.dart';
@@ -22,7 +23,7 @@ class _EventScreenState extends State<EventScreen> {
   void initState() {
     super.initState();
     _startDate = DateTime.now();
-    context.read<EventCubit>().getEventList(startDate: _startDate);
+    context.read<EventCubit>().getEventList(EventParams(startDate: _startDate));
   }
 
   @override
@@ -35,8 +36,7 @@ class _EventScreenState extends State<EventScreen> {
           DateRangeSelector(
             onDateSelected: (start, end) {
               context.read<EventCubit>().getEventList(
-                startDate: start,
-                endDate: end,
+                EventParams(startDate: _startDate),
               );
             },
           ),

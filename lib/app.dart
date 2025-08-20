@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'core/service_locator/get_it.dart';
+import 'core/di/injection.dart';
 import 'features/event/presentation/bloc/event_cubit.dart';
 import 'features/event/presentation/views/event_screen.dart';
 
