@@ -25,32 +25,38 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
   @override
   Future<List<EventModel>> getEvents(EventParams params) async {
     final formatter = DateFormat('dd-MM-yyyy');
-    try {
-      return await client.getEvents(
+    return _safeCall(
+      () => client.getEvents(
         formatter.format(params.startDate),
         params.endDate != null ? formatter.format(params.endDate!) : null,
-      );
-    } on DioException catch (e) {
-      if (e.response?.data != null) {
-        final apiError = ApiError.fromJson(e.response!.data);
-        throw ServerException(apiError.allMessages);
-      }
-      throw ServerException(e.message);
-    }
+      ),
+    );
   }
 
   @override
   Future<EventModel> createEvent(EventModel event) async {
-    return await client.createEvent(event);
+    return _safeCall(() => client.createEvent(event));
   }
 
   @override
   Future<EventModel> updateEvent(int id, EventModel event) async {
-    return await client.updateEvent(id, event.toJson());
+    return _safeCall(() => client.updateEvent(id, event.toJson()));
   }
 
   @override
   Future<void> delete(int id) async {
-    return await client.deleteEvent(id);
+    return _safeCall(() => client.deleteEvent(id));
+  }
+}
+
+Future<T> _safeCall<T>(Future<T> Function() call) async {
+  try {
+    return await call();
+  } on DioException catch (e) {
+    if (e.response?.data != null) {
+      final apiError = ApiError.fromJson(e.response!.data);
+      throw ServerException(apiError.allMessages);
+    }
+    throw ServerException(e.message);
   }
 }
