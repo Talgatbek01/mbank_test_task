@@ -1,72 +1,68 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class DateRangeSelector extends StatefulWidget {
+  final DateTime startDate;
+  final DateTime? endDate;
   final Function(DateTime start, DateTime? end) onDateSelected;
 
-  const DateRangeSelector({super.key, required this.onDateSelected});
+  const DateRangeSelector({
+    super.key,
+    required this.onDateSelected,
+    required this.startDate,
+    this.endDate,
+  });
 
   @override
   State<DateRangeSelector> createState() => _DateRangeSelectorState();
 }
 
 class _DateRangeSelectorState extends State<DateRangeSelector> {
-  DateTime _startDate = DateTime.now();
-  DateTime? _endDate;
-
-  void _selectStartDate() async {
-    final now = DateTime.now();
-    final result = await showDatePicker(
-      context: context,
-      initialDate: _startDate,
-      firstDate: DateTime(now.year - 1),
-      lastDate: DateTime(now.year + 1),
-    );
-
-    if (result != null) {
-      setState(() {
-        _startDate = result;
-      });
-    }
-
-    widget.onDateSelected.call(_startDate, _endDate);
-  }
-
-  void _selectEndDate() async {
-    final now = DateTime.now();
-    final result = await showDatePicker(
-      context: context,
-      initialDate: _endDate ?? _startDate,
-      firstDate: DateTime(now.year - 1),
-      lastDate: DateTime(now.year + 1),
-    );
-
-    if (result != null) {
-      setState(() {
-        _endDate = result;
-      });
-    }
-
-    widget.onDateSelected.call(_startDate, _endDate);
-  }
-
   @override
   Widget build(BuildContext context) {
+    log('date selector build');
+    final now = DateTime.now();
+
+    final formatter = DateFormat('dd-MM-yyyy');
+
     return Column(
       spacing: 10,
+      mainAxisSize: MainAxisSize.min,
       children: [
         ElevatedButton(
-          onPressed: _selectStartDate,
-          child: Text(
-            'Начальная дата: ${DateFormat('dd-MM-yyyy').format(_startDate)}',
-          ),
+          onPressed: () async {
+            final result = await showDatePicker(
+              context: context,
+              initialDate: widget.startDate,
+              firstDate: now,
+              lastDate: now.add(const Duration(days: 365)),
+            );
+
+            if (result != null && context.mounted) {
+              widget.onDateSelected(result, widget.endDate);
+            }
+          },
+          child: Text('Начальная дата: ${formatter.format(widget.startDate)}'),
         ),
         ElevatedButton(
-          onPressed: _selectEndDate,
+          onPressed: () async {
+            final result = await showDatePicker(
+              context: context,
+              initialDate: widget.endDate,
+              firstDate: widget.startDate,
+              lastDate: widget.startDate.add(const Duration(days: 365)),
+            );
+
+            if (result != null && context.mounted) {
+              widget.onDateSelected(widget.startDate, result);
+            }
+          },
           child: Text(
-            _endDate == null
+            widget.endDate == null
                 ? 'Выбрать конечную дату'
-                : 'Конечная дата: ${DateFormat('dd-MM-yyyy').format(_endDate!)}',
+                : 'Конечная дата: ${formatter.format(widget.endDate!)}',
           ),
         ),
       ],

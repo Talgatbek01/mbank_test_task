@@ -5,6 +5,7 @@ import 'package:injectable/injectable.dart';
 import '../../../../core/error/failure.dart';
 import '../../../../core/usecases/usecase.dart';
 import '../entities/event_entity.dart';
+import '../failures/invalid_date_failure.dart';
 import '../repositories/event_repository.dart';
 
 @LazySingleton()
@@ -15,6 +16,14 @@ class EventUseCases implements UseCase<List<EventEntity>, EventParams> {
 
   @override
   Future<Either<Failure, List<EventEntity>>> call(EventParams params) async {
+    if (params.endDate != null) {
+      final difference = params.endDate!.difference(params.startDate).inDays;
+
+      if (difference < 7) {
+        return Left(const InvalidDateFailure('Разница между датами должна быть не меньше 7 дней'));
+      }
+    }
+
     return await eventRepository.getEvents(params);
   }
 }

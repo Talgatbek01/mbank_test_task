@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mbank_test_task/features/event/domain/use_cases/event_use_cases.dart';
 
+import '../../domain/use_cases/event_use_cases.dart';
 import '../bloc/event_cubit.dart';
 import '../widgets/date_range_selector.dart';
-import '../widgets/event_error_widget.dart';
 import '../widgets/event_item.dart';
 import '../widgets/events_empty_widget.dart';
 
@@ -18,31 +17,69 @@ class EventScreen extends StatefulWidget {
 
 class _EventScreenState extends State<EventScreen> {
   late DateTime _startDate;
+  late DateTime? _endDate;
 
   @override
   void initState() {
     super.initState();
     _startDate = DateTime.now();
-    context.read<EventCubit>().getEventList(EventParams(startDate: _startDate));
+    _endDate = null;
+    _getEvents(_startDate, _endDate);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Events Screen')),
+      appBar: AppBar(title: const Text('Events Screen')),
       body: Column(
+        spacing: 20,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const SizedBox(height: 20),
-          DateRangeSelector(
-            onDateSelected: (start, end) {
-              context.read<EventCubit>().getEventList(
-                EventParams(startDate: _startDate),
-              );
-            },
+          Center(
+            child: DateRangeSelector(
+              startDate: _startDate,
+              endDate: _endDate,
+              onDateSelected: (start, end) {
+                setState(() {
+                  _startDate = start;
+                  _endDate = end;
+                });
+
+                if (end != null) {
+                  _getEvents(start, end);
+                }
+              },
+            ),
           ),
-          const SizedBox(height: 10),
           Expanded(
-            child: BlocBuilder<EventCubit, EventState>(
+            child: BlocConsumer<EventCubit, EventState>(
+              listenWhen: (previous, current) => previous.status != current.status,
+              listener: (context, state) {
+                if (state.status == EventStatus.error) {
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Ошибка'),
+                      content: Text(state.error ?? 'Что-то пошло не так'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              _endDate = null;
+                            });
+
+                            _getEvents(_startDate, _endDate);
+
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              },
               builder: (context, state) {
                 switch (state.status) {
                   case EventStatus.initial:
@@ -63,11 +100,7 @@ class _EventScreenState extends State<EventScreen> {
                     );
 
                   case EventStatus.error:
-                    return Center(
-                      child: EventErrorWidget(
-                        error: state.error ?? 'Что то пошло не так',
-                      ),
-                    );
+                    return SizedBox.shrink();
                 }
               },
             ),
@@ -75,5 +108,9 @@ class _EventScreenState extends State<EventScreen> {
         ],
       ),
     );
+  }
+
+  void _getEvents(DateTime start, DateTime? end) {
+    context.read<EventCubit>().getEventList(EventParams(startDate: start, endDate: end));
   }
 }
