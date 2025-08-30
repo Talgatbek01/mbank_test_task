@@ -15,6 +15,10 @@ import 'package:injectable/injectable.dart' as _i526;
 import 'package:mbank_test_task/core/constants/constants.dart' as _i1000;
 import 'package:mbank_test_task/core/network_module/network_module.dart'
     as _i28;
+import 'package:mbank_test_task/core/services/notification/notification_service.dart'
+    as _i887;
+import 'package:mbank_test_task/core/services/notification/notification_service_impl.dart'
+    as _i542;
 import 'package:mbank_test_task/features/event/data/datasources/event_api_client.dart'
     as _i132;
 import 'package:mbank_test_task/features/event/data/datasources/event_remote_data_source.dart'
@@ -27,6 +31,16 @@ import 'package:mbank_test_task/features/event/domain/use_cases/event_use_cases.
     as _i470;
 import 'package:mbank_test_task/features/event/presentation/bloc/event_cubit.dart'
     as _i989;
+import 'package:mbank_test_task/features/prayer_time/data/datasources/prayer_time_remote_data_source.dart'
+    as _i392;
+import 'package:mbank_test_task/features/prayer_time/data/repositories_impl/prayer_time_repository_impl.dart'
+    as _i954;
+import 'package:mbank_test_task/features/prayer_time/domain/repositories/prayer_time_repository.dart'
+    as _i186;
+import 'package:mbank_test_task/features/prayer_time/domain/usecases/prayer_usecase.dart'
+    as _i435;
+import 'package:mbank_test_task/features/prayer_time/presentation/cubit/prayer_cubit.dart'
+    as _i167;
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
@@ -38,15 +52,35 @@ extension GetItInjectableX on _i174.GetIt {
     final networkModule = _$NetworkModule();
     gh.singleton<_i1000.Constants>(() => _i1000.Constants());
     gh.lazySingleton<_i361.Dio>(() => networkModule.dio());
+    gh.lazySingleton<_i887.NotificationService>(
+      () => _i542.NotificationServiceImpl(),
+    );
     gh.lazySingleton<_i132.EventApiClient>(
       () => networkModule.eventApiClient(gh<_i361.Dio>()),
+    );
+    gh.lazySingleton<_i392.PrayerTimeRemoteDataSource>(
+      () => _i392.PrayerTimeRemoteDataSourceImpl(),
     );
     gh.lazySingleton<_i850.EventRemoteDataSource>(
       () => _i850.EventRemoteDataSourceImpl(gh<_i132.EventApiClient>()),
     );
+    gh.lazySingleton<_i186.PrayerTimeRepository>(
+      () => _i954.PrayerTimeRepositoryImpl(
+        remoteDataSource: gh<_i392.PrayerTimeRemoteDataSource>(),
+      ),
+    );
     gh.lazySingleton<_i520.EventRepository>(
       () => _i777.EventRepositoryImpl(
         remoteDataSource: gh<_i850.EventRemoteDataSource>(),
+      ),
+    );
+    gh.lazySingleton<_i435.PrayerUseCase>(
+      () => _i435.PrayerUseCase(gh<_i186.PrayerTimeRepository>()),
+    );
+    gh.factory<_i167.PrayerCubit>(
+      () => _i167.PrayerCubit(
+        useCase: gh<_i435.PrayerUseCase>(),
+        notificationService: gh<_i887.NotificationService>(),
       ),
     );
     gh.lazySingleton<_i470.EventUseCases>(
